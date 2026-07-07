@@ -108,6 +108,21 @@ JSON
 $PY "$HERE/scripts/build_html.py" --template chat --scenario "$TMP/chat.json" --out "$TMP/chat.html" 2>/dev/null
 check $? "builder: chat template builds"
 
+echo "== presentation add-ons =="
+# frame + camera + cursor scenario must build and inline all three modules
+cat > "$TMP/framed.json" <<'JSON'
+{"surface":"chat","title":"t","frame":{"enabled":true,"title":"W","background":"mesh"},
+ "camera":[{"at":0,"zoom":1},{"at":500,"zoom":1.4,"target":".composer"}],
+ "cursor":[{"at":100,"kind":"type","target":".composer .input","text":"hi"},{"at":800,"kind":"click","target":".send"}],
+ "messages":[{"role":"user","text":"hi"},{"role":"assistant","body":"hello"}]}
+JSON
+$PY "$HERE/scripts/build_html.py" --template chat --scenario "$TMP/framed.json" --out "$TMP/framed.html" 2>/dev/null
+check $? "builder: framed scenario builds"
+grep -q "mac-window" "$TMP/framed.html";   check $? "framed: window chrome present"
+grep -q "studio-cursor" "$TMP/framed.html"; check $? "framed: cursor module present"
+grep -q "\.camera" "$TMP/framed.html";       check $? "framed: camera module present"
+grep -q '"frame"' "$TMP/framed.html";        check $? "framed: frame config injected"
+
 echo ""
 printf "== %d passed, %d failed ==\n" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

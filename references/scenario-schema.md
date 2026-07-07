@@ -87,6 +87,45 @@ A scenario is a plain JSON object that drives a template. Two surfaces.
 }
 ```
 
+## Presentation add-ons (both surfaces, all optional)
+
+Layer these on any scenario for a cinematic demo. They no-op if absent.
+
+### `frame` — macOS window on a background
+```jsonc
+"frame": {
+  "enabled": true,
+  "title": "Claude — Opus 4.8",   // titlebar text
+  "background": "mesh",            // clay | sunset | dusk | mesh | paper | ink | any CSS value
+  "padding": 56,                    // backdrop padding (px)
+  "width": 1180,                    // window width (px)
+  "height": 720                     // window body height (px)
+}
+```
+
+### `camera` — zoom / pan keyframes
+```jsonc
+"camera": [
+  { "at": 0,    "zoom": 1 },                             // ms timestamp + scale
+  { "at": 1000, "zoom": 1.45, "target": ".composer", "ms": 800 }, // zoom to a selector
+  { "at": 3800, "zoom": 1, "ms": 700 }                    // back out
+]
+```
+`target` centers a CSS selector in view; or give explicit `x`/`y` px offsets.
+`ms` overrides the transition duration for that move.
+
+### `cursor` — fake pointer: move / click / type
+```jsonc
+"cursor": [
+  { "at": 400,  "kind": "move",  "target": ".composer .input", "ms": 700 },
+  { "at": 1200, "kind": "type",  "target": ".composer .input", "text": "…", "cps": 15 },
+  { "at": 3100, "kind": "move",  "target": ".send" },
+  { "at": 3550, "kind": "click", "target": ".send" }
+]
+```
+`cps` = characters per second while typing. Pair with `startDelayMs` (chat)
+so the conversation waits for the cursor to finish typing before it "sends".
+
 ## Produced by the parser
 
 `scripts/from_transcript.py` emits a `code-session` scenario. Every assistant

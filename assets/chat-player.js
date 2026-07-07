@@ -126,6 +126,8 @@
 
   function run() {
     document.body.classList.add('recording');
+    const ci = document.querySelector('.composer .input');   // clear composer on send
+    if (ci) ci.textContent = '';
     const msgs = S.messages || [];
     let idx = 0;
     const nextMsg = () => {
@@ -154,6 +156,8 @@
     return Math.ceil(d + 1200);           // + tail hold
   })();
 
-  if (S.autoplay !== false) run();
-  else { /* render final state statically if needed */ run(); }
+  if (S.autoplay !== false) {
+    if (S.startDelayMs) setTimeout(run, S.startDelayMs);  // let the cursor type first
+    else run();
+  } else run();
 })();

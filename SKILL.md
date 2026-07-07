@@ -80,6 +80,21 @@ It injects the scenario, captures frames with headless Chrome using
 `--virtual-time-budget` (deterministic; frames run in parallel), and stitches
 them with ffmpeg. Needs `ffmpeg`. Prefer the HTML unless the user asks for a file.
 
+## Presentation add-ons (optional, both surfaces)
+
+Layer these onto any scenario for a cinematic demo (see `scenarios/chat-framed.json`
+and `make framed`). All no-op if absent:
+
+- **`frame`** — wrap the UI in a macOS window (traffic lights + title) on a
+  decorative background (`clay`/`sunset`/`dusk`/`mesh`/`paper`/`ink` or any CSS).
+- **`camera`** — zoom/pan keyframes (`{at, zoom, target}`) — a screencast camera
+  that zooms into the composer, a tool row, the answer…
+- **`cursor`** — a fake pointer that **moves**, **clicks**, and **types** into
+  the composer (`{at, kind:"move|click|type", target, text}`). Pair with chat's
+  `startDelayMs` so the conversation waits for typing to finish.
+
+Full schema in `references/scenario-schema.md`.
+
 ## Customizing the look
 
 Everything is tokenized. Edit `assets/studio.css` `:root` variables (clay accent,
@@ -96,6 +111,9 @@ assets/
   studio.css             design tokens + all component styles (single source)
   chat-player.js         renders + animates a chat scenario
   session-player.js      renders + animates a code-session scenario
+  frame.js               optional macOS window + background wrapper
+  camera.js              optional zoom/pan camera keyframes
+  cursor.js              optional fake pointer: move / click / type
 templates/
   chat.html              standalone-previewable chat template
   session.html           standalone-previewable session template

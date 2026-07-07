@@ -35,6 +35,11 @@ session: ## Build + open the code-session demo
 	@$(PY) scripts/build_html.py --template session --scenario scenarios/session-sound-effect.json --out $(DIST)/session.html
 	@$(OPEN) "$(PWD)/$(DIST)/session.html"
 
+.PHONY: framed
+framed: ## Build + open the "hero" demo (macOS window, background, camera zoom, cursor typing)
+	@$(PY) scripts/build_html.py --template chat --scenario scenarios/chat-framed.json --out $(DIST)/framed.html
+	@$(OPEN) "$(PWD)/$(DIST)/framed.html"
+
 .PHONY: replay
 replay: ## Rebuild a demo from THIS project's latest transcript, then open
 	@test -n "$(TRANSCRIPT)" || { echo "no transcript found in $(PROJ_DIR); pass TRANSCRIPT=path"; exit 1; }
@@ -58,7 +63,7 @@ video: ## Record MP4 (optional): make video TEMPLATE=session SCENARIO=x.json OUT
 
 # --- housekeeping ----------------------------------------------------------
 .PHONY: demos
-demos: chat session ## Build + open both example demos
+demos: chat session framed ## Build + open the example demos
 
 .PHONY: test
 test: ## Run the smoke + edge tests

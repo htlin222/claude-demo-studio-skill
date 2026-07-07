@@ -261,6 +261,83 @@ body.is-bypass .bypass-banner { display: flex; }
 
 .hidden { display: none !important; }
 
+/* ========================================================================
+   Presentation frame — macOS window on a background, with a zoomable camera.
+   Enabled per-scenario via `frame` / `camera` (see frame.js, camera.js).
+   ======================================================================== */
+.backdrop {
+  min-height: 100vh; width: 100%;
+  display: grid; place-items: center;
+  padding: var(--frame-pad, 64px);
+  position: relative; overflow: hidden;
+}
+/* soft decorative glow behind the window */
+.backdrop::before {
+  content: ""; position: absolute; inset: -20% -10% auto -10%; height: 70%;
+  background: radial-gradient(60% 100% at 50% 0%, rgba(255,255,255,.35), transparent 70%);
+  pointer-events: none;
+}
+/* background presets (data-bg) */
+.backdrop[data-bg="clay"]   { background: linear-gradient(145deg, #e8a07e 0%, #d97757 45%, #b5502f 100%); }
+.backdrop[data-bg="sunset"] { background: linear-gradient(160deg, #f6d365 0%, #fda085 40%, #f76b8a 100%); }
+.backdrop[data-bg="dusk"]   { background: linear-gradient(160deg, #2b3a67 0%, #4a4e69 55%, #22223b 100%); }
+.backdrop[data-bg="mesh"]   { background:
+  radial-gradient(45% 55% at 15% 20%, rgba(217,119,87,.75), transparent 60%),
+  radial-gradient(40% 50% at 85% 15%, rgba(120,150,220,.65), transparent 60%),
+  radial-gradient(55% 60% at 75% 85%, rgba(240,180,120,.7), transparent 60%),
+  linear-gradient(160deg, #f3efe9, #e9e4dc); }
+.backdrop[data-bg="paper"]  { background: hsl(45 20% 92%); }
+.backdrop[data-bg="ink"]    { background: radial-gradient(120% 120% at 50% 0%, #26262b, #131316); }
+
+/* the camera: a transform layer we pan/zoom */
+.camera {
+  transform-origin: center center;
+  transition: transform var(--cam-ms, 900ms) cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+}
+
+/* the macOS window chrome */
+.mac-window {
+  border-radius: 13px; overflow: hidden; background: var(--bg-page);
+  box-shadow: 0 40px 90px -20px rgba(20,15,10,.55), 0 0 0 1px rgba(0,0,0,.06),
+              0 2px 6px rgba(0,0,0,.12);
+  width: var(--win-w, 1200px); max-width: 100%;
+}
+.titlebar {
+  height: 40px; flex-shrink: 0; display: flex; align-items: center;
+  gap: 10px; padding: 0 14px; position: relative;
+  background: color-mix(in srgb, var(--bg-page) 82%, #fff);
+  border-bottom: 1px solid var(--border);
+}
+:root[data-theme="dark"] .titlebar { background: color-mix(in srgb, var(--bg-page) 70%, #000); }
+.lights { display: flex; gap: 8px; }
+.light { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.15); }
+.light.r { background: #ff5f57; } .light.y { background: #febc2e; } .light.g { background: #28c840; }
+.titlebar .wtitle {
+  position: absolute; left: 0; right: 0; text-align: center;
+  font-size: 13px; color: var(--text-muted); pointer-events: none;
+}
+.window-body { position: relative; overflow: hidden; height: var(--win-h, 760px); }
+
+/* when framed, the app fills the window body instead of the viewport */
+body.framed .window-body .app { height: 100%; }
+body.framed { overflow: auto; }
+
+/* fake cursor (cursor.js): move / click ripple / typing */
+.studio-cursor {
+  position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none;
+  margin-left: -4px; margin-top: -2px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
+  transition: transform 600ms cubic-bezier(.4, 0, .2, 1);
+}
+.studio-cursor svg { width: 24px; height: 24px; display: block; }
+.studio-cursor::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 40px; height: 40px;
+  margin: -20px 0 0 -20px; border-radius: 50%; border: 2px solid var(--clay); opacity: 0;
+}
+.studio-cursor.click::after { animation: cur-ripple .5s ease-out; }
+@keyframes cur-ripple { 0% { transform: scale(.2); opacity: .75 } 100% { transform: scale(1.1); opacity: 0 } }
+
 /* demo controls — hidden during recording via body.recording */
 .demo-toggle { position: fixed; top: 12px; right: 16px; z-index: 60; display: flex; gap: 6px; }
 .demo-toggle button { font-size: 12px; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text); cursor: pointer; }
