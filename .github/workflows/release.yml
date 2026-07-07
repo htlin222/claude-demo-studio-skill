@@ -1,0 +1,59 @@
+name: Build & Release Skill
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version from SHA
+        id: version
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Package skill
+        run: |
+          zip -r claude-demo-studio.zip . \
+            -x '.git/*' '.github/*' 'dist/*' '*/__pycache__/*'
+          cp claude-demo-studio.zip claude-demo-studio.skill
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: claude-demo-studio-${{ steps.version.outputs.sha }}
+          path: claude-demo-studio.skill
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          TAG="v0.1.0-${SHORT_SHA}"
+          cat > release-notes.md <<EOF
+          ## claude-demo-studio skill
+
+          **Version:** \`${SHORT_SHA}\`
+          **Commit:** ${GITHUB_SHA}
+
+          ### Install
+
+          \`\`\`bash
+          npx skills add htlin222/claude-demo-studio-skill
+          \`\`\`
+
+          Or download the \`.skill\` file from assets below.
+          EOF
+          gh release create "${TAG}" \
+            --title "claude-demo-studio skill ${TAG}" \
+            --notes-file release-notes.md \
+            claude-demo-studio.skill

@@ -1,0 +1,22 @@
+{
+  "surface": "chat",
+  "theme": "light",
+  "title": "光合作用的簡明解釋",
+  "user": "HL",
+  "model": "Opus 4.8",
+  "tier": "Max",
+  "autoplay": true,
+  "speed": 1,
+  "messages": [
+    { "role": "user", "text": "用三句話解釋光合作用，並附一個小標題。" },
+    {
+      "role": "assistant",
+      "thinking": "Thought for 11s",
+      "thinkingMs": 1300,
+      "blocks": [
+        { "type": "h3", "text": "光合作用" },
+        { "type": "p", "text": "光合作用是綠色植物、藻類與某些細菌利用葉綠素捕捉陽光能量的過程。它們吸收二氧化碳和水，在光能的驅動下合成葡萄糖等養分。過程中同時釋放氧氣，成為地球上大多數生物賴以維生的能量與空氣來源。" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+.DS_Store
+*.zip
+*.skill
+dist/
+scenarios/_*.json
+templates/.rec-*.html

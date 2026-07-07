@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Demo Studio — Code Session</title>
+<link rel="stylesheet" href="../assets/studio.css">
+</head>
+<body>
+<div class="demo-toggle">
+  <button onclick="var h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark'">🌓</button>
+  <button onclick="location.reload()">↻ replay</button>
+</div>
+<div id="app"></div>
+
+<!-- The recorder replaces everything between the markers with a custom scenario
+     (e.g. one produced by scripts/from_transcript.py). Edit for standalone preview. -->
+<script>
+/*STUDIO:SCENARIO_START*/
+window.SCENARIO = {
+  surface: "code-session",
+  theme: "light",
+  sessionTitle: "Add sound effect for prompt input",
+  model: "Opus 4.8",
+  effort: "High",
+  mode: "Bypass permissions",
+  turnGapMs: 600,
+  recents: ["Add sound effect for prompt input", "iguana-quiet-candle", "vm-lazy-lightning"],
+  turns: [
+    { type: "user", text: "Add a subtle click sound when the user submits a prompt." },
+    { type: "assistant", text: "I'll locate the composer submit handler and wire in a short WebAudio blip." },
+    { type: "tool", verb: "Ran", label: "Grep onSubmit in composer",
+      detail: { head: "src/composer.tsx", lines: [ { t: "$ grep -n onSubmit src/composer.tsx", kind: null }, { t: "42: const onSubmit = () => send(value)", kind: null } ] } },
+    { type: "tool", verb: "Ran", label: "Edit composer.tsx",
+      detail: { head: "src/composer.tsx", lines: [ { t: "+ playBlip();", kind: "add" }, { t: "  send(value);", kind: null } ] } },
+    { type: "askq", chip: "sound style", question: "Which submit sound should I use?", multi: false,
+      options: [ { label: "Soft blip", desc: "220Hz sine, 60ms", selected: true }, { label: "Mechanical click", desc: "filtered noise burst" }, { label: "None", desc: "silent" } ] },
+    { type: "tool", verb: "Running", label: "Run test suite" },
+    { type: "status", elapsed: "2 tool calls", tasks: 1 }
+  ]
+};
+/*STUDIO:SCENARIO_END*/
+</script>
+<script src="../assets/session-player.js"></script>
+</body>
+</html>
